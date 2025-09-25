@@ -17,6 +17,8 @@ hknock = 0;
 vknock = 0;
 anchored = false; 
 anchor_id = noone; 
+on_ground = true;
+locked_hspd = 0;
 rel_x = 0;
 rel_y = 0;
 #endregion

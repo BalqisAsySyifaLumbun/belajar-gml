@@ -2,6 +2,11 @@
 
 var speed_s = 11;
 
+var array_vector = [
+    [hspd, vspd],
+    [hknock, vknock]
+];
+
 
 // Respawn check
 if (y > room_height + 100) {
@@ -41,6 +46,7 @@ if (alarm[0] <= 0) {
 }
 #endregion
 
+#region horizontal_player
 //  Input horizontal
 var hinput = keyboard_check(vk_right) - keyboard_check(vk_left);
 
@@ -55,7 +61,9 @@ if (hinput != 0) {
 
 //  Gravity
 vspd += grav;
+#endregion
 
+#region vertical_player
   //Vertical collision with static walls
 if (place_meeting(x, y + vspd, obj_parent_wall)) {
     while (!place_meeting(x, y + sign(vspd), obj_parent_wall)) {
@@ -65,7 +73,7 @@ if (place_meeting(x, y + vspd, obj_parent_wall)) {
 
      //Jump input
     if (keyboard_check(vk_up)) {
-        vspd = -10;
+        vspd = -15;
         x_scale = image_xscale * 0.6;
         y_scale = image_yscale * 1.2;
 		show_debug_message("Koordinat x: "+ string(x));
@@ -74,7 +82,7 @@ if (place_meeting(x, y + vspd, obj_parent_wall)) {
 } else {
     y += vspd;
 }
-
+#endregion
 
 
 var platform = instance_place(x, y + 1, obj_floating_wall);
@@ -89,55 +97,34 @@ if (platform != noone) {
 	y = platform.bbox_top - (bbox_bottom - y);
 	y += platform.vspd;
     
-	var array_vector = [[hspd,vspd],[hspd_push,vspd_push],[platform.hspd,platform.vspd]];
+	array_push(array_vector, [platform.hspd, platform.vspd]);
 	
+	//Supaya bisa jalan di platform bergerak
+	if (keyboard_check(vk_left) || keyboard_check(vk_right)){
+		x += hspd;
+	}
+	
+	//Khusus yg horizontal
 	if (platform.direction_wall == "horizontal") {
-		x += (platform.hspd * platform.direction_flag);
+		on_ground = true;
+		x += platform.hspd * platform.direction_flag;
 		
-		
-		if (!anchored) {
+		if (keyboard_check_pressed(vk_up && on_ground)){
+			locked_hspd = platform.hspd * platform.direction_flag;
+			show_debug_message(string(hspd));
+			x += hspd;
+			on_ground = false;
 			
-			show_debug_message("X: "+string(x));
-
-	        anchored = true;
-	        anchor_id = platform.id;
-	        rel_x = x - platform.x;
-	        rel_y = y - platform.y;
-			var width = platform.bbox_right - platform.bbox_left;
-			hspd = 0;
-			show_debug_message("ANCHORED!");
-			show_debug_message("PLATFORM WIDTH: "+string(width)+","+string(platform.bbox_right)+","+string(platform.bbox_left));
-			show_debug_message("ANCHORED: "+string(anchor_id)+","+string(rel_x)+","+string(rel_y));
-			show_debug_message("PLATFORM SPEED: "+string(anchor_id.hspd));
-
-		}
-
-		
-		if (anchored) {
-			if (x < anchor_id.bbox_left || x > anchor_id.bbox_right) {
-				anchored = false;
-				anchor_id = 0;
-		        rel_x = 0;
-		        rel_y = 0;
-				hspd = 0;
-				show_debug_message("FREE!");
-				show_debug_message("FREE: "+string(rel_x)+","+string(rel_y));
-			}
-			
-			else if (keyboard_check(vk_up)) {
-				for (var i = 0; i < array_length(array_vector); i++) {
-				    x += array_vector[i][0];
-				    y += array_vector[i][1];
-				}
-				
-		    }
-		}
+		}		
     }
 }
 
-if (!keyboard_check_pressed(vk_up)) { 
-	x += hspd;
+if (!on_ground) {
+    // tambahkan locked_hspd setiap frame selama lompat
+    x += locked_hspd;
 }
+
+//
 
 
 //Player script
