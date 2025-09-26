@@ -13,7 +13,6 @@ if (direction_wall == "horizontal") {
 	    x = start_x - move_distance;
 	    direction_flag = 1; 
 	}
-
 }
 
 else {
@@ -29,4 +28,5 @@ else {
 	    y = start_y - move_distance;
 	    direction_flag = 1; 
 	}
+	
 }

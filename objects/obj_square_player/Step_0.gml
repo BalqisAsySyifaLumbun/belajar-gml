@@ -70,6 +70,7 @@ if (place_meeting(x, y + vspd, obj_parent_wall)) {
         y += sign(vspd);
     }
     vspd = 0;
+	on_leap = false;
 
      //Jump input
     if (keyboard_check(vk_up)) {
@@ -89,40 +90,66 @@ var platform = instance_place(x, y + 1, obj_floating_wall);
 
 if (platform != noone) {
 	
-	var rel_x = x - platform.x;
-    var rel_y = y - platform.y;
+	
+	if (x >= platform.bbox_left && x <= platform.bbox_right) {
+		on_leap = false;
+		var rel_x = x - platform.x;
+	    var rel_y = y - platform.y;
+	    anchor_id = platform.id;
+	    //show_debug_message("Posisi relatif karakter di platform: "  + string(rel_x) + ", " + string(rel_y));
+	
+		y = platform.bbox_top - (bbox_bottom - y);
+		y += platform.vspd;
     
-    show_debug_message("Posisi relatif karakter di platform: "  + string(rel_x) + ", " + string(rel_y));
+		array_push(array_vector, [platform.hspd, platform.vspd]);
 	
-	y = platform.bbox_top - (bbox_bottom - y);
-	y += platform.vspd;
-    
-	array_push(array_vector, [platform.hspd, platform.vspd]);
-	
-	//Supaya bisa jalan di platform bergerak
-	if (keyboard_check(vk_left) || keyboard_check(vk_right)){
-		x += hspd;
-	}
-	
-	//Khusus yg horizontal
-	if (platform.direction_wall == "horizontal") {
-		on_ground = true;
-		x += platform.hspd * platform.direction_flag;
-		
-		if (keyboard_check_pressed(vk_up && on_ground)){
-			locked_hspd = platform.hspd * platform.direction_flag;
-			show_debug_message(string(hspd));
+		//Supaya bisa jalan di platform bergerak
+		if (keyboard_check(vk_left) || keyboard_check(vk_right)){
 			x += hspd;
-			on_ground = false;
+		}
+	
+		if (platform.direction_wall == "vertical") {
+			on_hori_ground = false;
+			show_debug_message("VERTICAL");
 			
-		}		
-    }
+		}
+	
+		//Khusus yg horizontal
+		if (platform.direction_wall == "horizontal") {
+			on_hori_ground = true;
+			show_debug_message("HORIZONTAL");
+			
+			x += platform.hspd * platform.direction_flag;
+		
+		
+			if (keyboard_check_pressed(vk_up) && on_hori_ground){
+				locked_hspd = platform.hspd * platform.direction_flag;
+				on_hori_ground = false;
+				on_leap = true;
+				show_debug_message("LEAPING");
+			
+			
+			}
+		
+
+	    }
+	}
+	else{
+		platform = noone;
+	}
+}
+else{
+	on_hori_ground = false;
 }
 
-if (!on_ground) {
-    // tambahkan locked_hspd setiap frame selama lompat
-    x += locked_hspd;
+if (on_leap) {
+	x += locked_hspd;
 }
+else{
+	locked_hspd = 0;
+	x += locked_hspd;
+}
+
 
 //
 
