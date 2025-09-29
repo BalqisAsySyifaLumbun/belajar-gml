@@ -63,6 +63,13 @@ if (hinput != 0) {
 vspd += grav;
 #endregion
 
+if (keyboard_check(vk_up) && jump_count > 0) {
+   vspd = -15;
+   jump_count -= 1;
+   x_scale = image_xscale * 0.6;
+   y_scale = image_yscale * 1.2;
+   show_debug_message(string(jump_count));}
+
 #region vertical_player
   //Vertical collision with static walls
 if (place_meeting(x, y + vspd, obj_parent_wall)) {
@@ -71,14 +78,16 @@ if (place_meeting(x, y + vspd, obj_parent_wall)) {
     }
     vspd = 0;
 	on_leap = false;
+	jump_count = max_jump;
 
      //Jump input
-    if (keyboard_check(vk_up)) {
+    if (keyboard_check(vk_up) && jump_count > 0) {
         vspd = -15;
+		jump_count -= 1;
         x_scale = image_xscale * 0.6;
         y_scale = image_yscale * 1.2;
-		show_debug_message("Koordinat x: "+ string(x));
-		show_debug_message("Koordinat y: "+ string(y));
+		show_debug_message(string(jump_count));
+		
     }
 } else {
     y += vspd;
@@ -93,6 +102,7 @@ if (platform != noone) {
 	
 	if (x >= platform.bbox_left && x <= platform.bbox_right) {
 		on_leap = false;
+		jump_count = max_jump;
 		var rel_x = x - platform.x;
 	    var rel_y = y - platform.y;
 	    anchor_id = platform.id;
@@ -110,14 +120,15 @@ if (platform != noone) {
 	
 		if (platform.direction_wall == "vertical") {
 			on_hori_ground = false;
-			show_debug_message("VERTICAL");
+			//show_debug_message("VERTICAL");
 			
 		}
 	
 		//Khusus yg horizontal
 		if (platform.direction_wall == "horizontal") {
 			on_hori_ground = true;
-			show_debug_message("HORIZONTAL");
+			//show_debug_message(string(platform.x));
+			//show_debug_message("HORIZONTAL");
 			
 			x += platform.hspd * platform.direction_flag;
 		
@@ -126,7 +137,7 @@ if (platform != noone) {
 				locked_hspd = platform.hspd * platform.direction_flag;
 				on_hori_ground = false;
 				on_leap = true;
-				show_debug_message("LEAPING");
+				//show_debug_message("LEAPING");
 			
 			
 			}
@@ -161,6 +172,7 @@ scr_player();
 if (place_meeting(x, y + 1, obj_parent_wall) && !place_meeting(x, yprevious + 1, obj_parent_wall)) {
     x_scale = image_xscale * 1.8;
     y_scale = image_yscale * 0.2;
+	jump_count = max_jump;
 }
 
 x_scale = lerp(x_scale, image_xscale, 0.3);
