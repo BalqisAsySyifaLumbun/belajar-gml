@@ -63,12 +63,9 @@ if (hinput != 0) {
 vspd += grav;
 #endregion
 
-if (keyboard_check(vk_up) && jump_count > 0) {
-   vspd = -15;
-   jump_count -= 1;
-   x_scale = image_xscale * 0.6;
-   y_scale = image_yscale * 1.2;
-   show_debug_message(string(jump_count));}
+if (keyboard_check(vk_up) && jump_count > 0 && !on_hori_ground) {
+   scr_jump();
+}
 
 #region vertical_player
   //Vertical collision with static walls
@@ -82,11 +79,7 @@ if (place_meeting(x, y + vspd, obj_parent_wall)) {
 
      //Jump input
     if (keyboard_check(vk_up) && jump_count > 0) {
-        vspd = -15;
-		jump_count -= 1;
-        x_scale = image_xscale * 0.6;
-        y_scale = image_yscale * 1.2;
-		show_debug_message(string(jump_count));
+        scr_jump();
 		
     }
 } else {
@@ -127,17 +120,17 @@ if (platform != noone) {
 		//Khusus yg horizontal
 		if (platform.direction_wall == "horizontal") {
 			on_hori_ground = true;
-			//show_debug_message(string(platform.x));
-			//show_debug_message("HORIZONTAL");
-			
+			//show_debug_message(string(on_hori_ground));
+
 			x += platform.hspd * platform.direction_flag;
 		
 		
-			if (keyboard_check_pressed(vk_up) && on_hori_ground){
-				locked_hspd = platform.hspd * platform.direction_flag;
+			if (keyboard_check_pressed(vk_up)){
+				show_debug_message("MASUK");
+				scr_jump_hori(platform);
 				on_hori_ground = false;
 				on_leap = true;
-				//show_debug_message("LEAPING");
+				
 			
 			
 			}
@@ -155,6 +148,7 @@ else{
 
 if (on_leap) {
 	x += locked_hspd;
+	show_debug_message(string(x));
 }
 else{
 	locked_hspd = 0;

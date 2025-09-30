@@ -42,6 +42,7 @@
     {"id":{"name":"obj_rect_wall","path":"objects/obj_rect_wall/obj_rect_wall.yy",},},
     {"id":{"name":"obj_square_player","path":"objects/obj_square_player/obj_square_player.yy",},},
     {"id":{"name":"Room1","path":"rooms/Room1/Room1.yy",},},
+    {"id":{"name":"scr_jump","path":"scripts/scr_jump/scr_jump.yy",},},
     {"id":{"name":"scr_player","path":"scripts/scr_player/scr_player.yy",},},
     {"id":{"name":"float","path":"sprites/float/float.yy",},},
     {"id":{"name":"points","path":"sprites/points/points.yy",},},
