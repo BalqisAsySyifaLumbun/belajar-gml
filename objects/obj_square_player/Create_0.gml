@@ -1,5 +1,12 @@
 window_set_size(1280,720);
 
+enum MOVEMENT{
+	PLAYER,
+	KNOCK,
+	PLATFORM,
+	MAX
+}
+
 #region instance_variable
 hspd = 0;
 max_hspd = 10;
